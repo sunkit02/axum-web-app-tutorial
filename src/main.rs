@@ -15,7 +15,7 @@ use crate::web::mw_auth::mw_ctx_resolve;
 use crate::web::mw_res_map::mw_reponse_map;
 use crate::web::{routes_login, routes_static};
 use axum::{middleware, Router};
-use std::net::SocketAddr;
+use tokio::net::TcpListener;
 use tower_cookies::CookieManagerLayer;
 
 // endregion: --- Modules
@@ -38,10 +38,9 @@ async fn main() -> Result<()> {
 		.fallback_service(routes_static::serve_dir());
 
 	// region:    --- Start Server
-	let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
-	println!("->> {:<12} - {addr}\n", "LISTENING");
-	axum::Server::bind(&addr)
-		.serve(routes_all.into_make_service())
+	let listener = TcpListener::bind("127.0.0.1:8080").await.unwrap();
+	println!("->> {:<12} - {:?}\n", "LISTENING", listener.local_addr());
+	axum::serve(listener, routes_all.into_make_service())
 		.await
 		.unwrap();
 	// endregion: --- Start Server

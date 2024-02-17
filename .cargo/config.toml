@@ -1,0 +1,9 @@
+# Cargo config file
+# Specifies configuration for all `cargo ...` commands
+
+
+# Environment variables
+[env]
+
+# Scope down tracing, to filter out external lib tracing.
+RUST_LOG='rust_web_app=debug'

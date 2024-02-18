@@ -29,6 +29,7 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 sqlx = { version = "0.6.0", features = ["runtime-tokio-rustls", "postgres", "uuid", "time"] }
 serial_test = "3.0.0"
+sqlb = "0.3"
 
 
 [dev-dependencies]

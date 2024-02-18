@@ -1,6 +1,14 @@
 use crate::{Error, Result};
 use std::{env, sync::OnceLock};
 
+pub struct Config {
+	// --Db
+	pub db_url: String,
+
+	// -- Web
+	pub web_folder: String,
+}
+
 pub fn config() -> &'static Config {
 	static INSTANCE: OnceLock<Config> = OnceLock::new();
 
@@ -11,14 +19,11 @@ pub fn config() -> &'static Config {
 	})
 }
 
-pub struct Config {
-	pub web_folder: String,
-}
-
 impl Config {
 	fn load_from_env() -> Result<Config> {
 		Ok(Config {
 			web_folder: get_env("SERVICE_WEB_FOLDER")?,
+			db_url: get_env("SERVICE_DB_URL")?,
 		})
 	}
 }

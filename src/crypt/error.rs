@@ -4,7 +4,11 @@ pub type Result<T> = core::result::Result<T, Error>;
 
 #[derive(Debug, Clone, Serialize)]
 pub enum Error {
-	FailToCreatePool(String),
+	// Key
+	KeyFailHmac,
+
+	// -- Pwd
+	PwdNotMatching,
 }
 
 impl core::fmt::Display for Error {

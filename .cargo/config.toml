@@ -11,6 +11,12 @@ RUST_LOG='rust_web_app=debug'
 ## -- Secrets
 SERVICE_DB_URL="postgres://app_user:dev_only_pwd@localhost/app_db"
 
+SERVICE_PWD_KEY="KemoW3cFNztjbNFcj0PHARraDcirmiQsS9Fb9jGt4zQlzISG1LxoxHsJ0Prbx3LKc_9P9HEfgTcEJH6BKTIAfw"
+
+SERVICE_TOKEN_KEY="dyY9rAWhtCKcN9q8VJS3arUbfdGP2kOJe4fJwJf0wAgG2HW9PtZix2cTgXgg5ToDuFVXE2m1yXYW4PY6YNl-Jg"
+SERVICE_TOKEN_DURATION_SEC="1800" # 30 minutes
+
+
 ## -- ConfigMap
 
 # This will be relative to Cargo.toml

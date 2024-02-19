@@ -1,7 +1,8 @@
+use std::str::FromStr;
 use std::sync::Arc;
 
-use crate::web;
-use axum::http::StatusCode;
+use crate::{model, web};
+use axum::http::{HeaderName, HeaderValue, StatusCode};
 use axum::response::{IntoResponse, Response};
 use serde::Serialize;
 use tracing::debug;
@@ -12,10 +13,21 @@ pub type Result<T> = core::result::Result<T, Error>;
 #[serde(tag = "type", content = "data")]
 pub enum Error {
 	// -- Login
-	LoginFail,
+	LoginFailUsernameNotFound,
+	LoginFailUserHasNoPwd { user_id: i64 },
+	LoginFailPwdNotMatching { user_id: i64 },
 
 	// -- CtxExtError
 	CtxExt(web::mw_auth::CtxExtError),
+
+	// -- Modules
+	Model(model::Error),
+}
+
+impl From<model::Error> for Error {
+	fn from(value: model::Error) -> Self {
+		Self::Model(value)
+	}
 }
 
 // region:    --- Axum IntoResponse
@@ -56,8 +68,15 @@ impl Error {
 
 		#[allow(unreachable_patterns)]
 		match self {
-			// -- Login/Auth
+			// -- Login
 			CtxExt(_) => (StatusCode::FORBIDDEN, ClientError::NO_AUTH),
+
+			// -- Auth
+			LoginFailUsernameNotFound
+			| LoginFailUserHasNoPwd { .. }
+			| LoginFailPwdNotMatching { .. } => {
+				(StatusCode::FORBIDDEN, ClientError::LOGIN_FAIL)
+			}
 
 			// -- Fallback.
 			_ => (

@@ -1,13 +1,18 @@
-use crate::model;
+use crate::{crypt, model};
+use serde::Serialize;
+use serde_with::{serde_as, DisplayFromStr};
 
 pub type Result<T> = core::result::Result<T, Error>;
 
-#[derive(Debug)]
+#[serde_as]
+#[derive(Debug, Serialize)]
 pub enum Error {
 	// -- Config
 	ConfigMissingEnv(&'static str),
+	ConfigWrongFormat(&'static str),
 
 	// -- Modules
+	Crypt(crypt::Error),
 	Model(model::Error),
 }
 

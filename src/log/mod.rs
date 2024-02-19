@@ -5,18 +5,22 @@ use axum::http::{Method, Uri};
 use serde::Serialize;
 use serde_json::{json, Value};
 use serde_with::skip_serializing_none;
+use std::ops::Deref;
 use std::time::{SystemTime, UNIX_EPOCH};
 use tracing::debug;
 use uuid::Uuid;
 
-pub async fn log_request(
+pub async fn log_request<E>(
 	uuid: Uuid,
 	req_method: Method,
 	uri: Uri,
 	ctx: Option<Ctx>,
-	web_error: Option<&web::Error>,
+	web_error: Option<&E>,
 	client_error: Option<ClientError>,
-) -> Result<()> {
+) -> Result<()>
+where
+	E: Deref<Target = web::Error> + Serialize,
+{
 	let timestamp = SystemTime::now()
 		.duration_since(UNIX_EPOCH)
 		.unwrap()

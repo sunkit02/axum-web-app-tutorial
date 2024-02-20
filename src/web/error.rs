@@ -1,7 +1,7 @@
 use std::str::FromStr;
 use std::sync::Arc;
 
-use crate::{model, web};
+use crate::{crypt, model, web};
 use axum::http::{HeaderName, HeaderValue, StatusCode};
 use axum::response::{IntoResponse, Response};
 use serde::Serialize;
@@ -21,7 +21,14 @@ pub enum Error {
 	CtxExt(web::mw_auth::CtxExtError),
 
 	// -- Modules
+	Crypt(crypt::Error),
 	Model(model::Error),
+}
+
+impl From<crypt::Error> for Error {
+	fn from(value: crypt::Error) -> Self {
+		Self::Crypt(value)
+	}
 }
 
 impl From<model::Error> for Error {

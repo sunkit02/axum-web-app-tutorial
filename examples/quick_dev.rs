@@ -20,5 +20,17 @@ async fn main() -> Result<()> {
 	);
 	req_login.await?.print().await?;
 
+	hc.do_get("/hello").await?.print().await?;
+
+	let req_logout = hc.do_post(
+		"/api/logoff",
+		json!({
+			"logoff": true
+		}),
+	);
+	req_logout.await?.print().await?;
+
+	hc.do_get("/hello").await?.print().await?;
+
 	Ok(())
 }

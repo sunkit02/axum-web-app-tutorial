@@ -14,8 +14,11 @@ use tracing::debug;
 pub fn routes(mm: ModelManager) -> Router {
 	Router::new()
 		.route("/api/login", post(api_login_handler))
+		.route("/api/logoff", post(api_logoff_handler))
 		.with_state(mm)
 }
+
+// region:      --   Login
 
 async fn api_login_handler(
 	State(mm): State<ModelManager>,
@@ -69,3 +72,36 @@ struct LoginPayload {
 	username: String,
 	pwd: String,
 }
+
+// endregion:   --   Login
+
+// region:      --   Logoff
+
+async fn api_logoff_handler(
+	cookies: Cookies,
+	Json(payload): Json<LogoffPaylod>,
+) -> Result<Json<Value>> {
+	debug!("{:<12} - api_logff_handler", "HANDLER");
+
+	let should_logoff = payload.logoff;
+
+	if should_logoff {
+		web::remove_token_cookie(&cookies)?;
+	}
+
+	// Create the success body.
+	let body = Json(json!({
+		"result": {
+			"logged_off": should_logoff
+		}
+	}));
+
+	Ok(body)
+}
+
+#[derive(Debug, Deserialize)]
+struct LogoffPaylod {
+	logoff: bool,
+}
+
+// endregion:   --   Logoff
